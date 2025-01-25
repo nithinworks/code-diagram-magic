@@ -10,13 +10,15 @@ import {
   foldGutter,
   indentOnInput,
 } from "@codemirror/language";
+import { Button } from "./ui/button";
 
 interface CodeEditorProps {
   code: string;
   onChange: (code: string) => void;
+  onSubmit: () => void;
 }
 
-const CodeEditor = ({ code, onChange }: CodeEditorProps) => {
+const CodeEditor = ({ code, onChange, onSubmit }: CodeEditorProps) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const editorViewRef = useRef<EditorView>();
 
@@ -56,10 +58,18 @@ const CodeEditor = ({ code, onChange }: CodeEditorProps) => {
   }, []);
 
   return (
-    <div 
-      ref={editorRef} 
-      className="h-full min-h-[400px] border rounded bg-background text-foreground overflow-auto"
-    />
+    <div className="space-y-4">
+      <div 
+        ref={editorRef} 
+        className="h-full min-h-[400px] border rounded bg-background text-foreground overflow-auto"
+      />
+      <Button 
+        onClick={onSubmit}
+        className="w-full"
+      >
+        Generate UML Diagram
+      </Button>
+    </div>
   );
 };
 
