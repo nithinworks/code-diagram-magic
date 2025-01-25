@@ -33,8 +33,8 @@ const CodeEditor = ({ code, onChange }: CodeEditorProps) => {
         foldGutter(),
         syntaxHighlighting(defaultHighlightStyle),
         javascript(),
-        defaultKeymap,
-        historyKeymap,
+        [defaultKeymap],
+        [historyKeymap],
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             onChange(update.state.doc.toString());
