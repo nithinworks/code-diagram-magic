@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export const generateMockUMLDiagram = async (code: string) => {
   try {
@@ -8,14 +9,15 @@ export const generateMockUMLDiagram = async (code: string) => {
       .from('secrets')
       .select('value')
       .eq('name', 'GEMINI_API_KEY')
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    if (error) {
       console.error("Error fetching API key:", error);
-      return {
-        success: false,
-        error: "Failed to fetch API key. Please ensure it's properly configured."
-      };
+      throw new Error("Failed to fetch API key");
+    }
+
+    if (!data) {
+      throw new Error("API key not found");
     }
 
     // Initialize Gemini with the API key
@@ -41,9 +43,15 @@ export const generateMockUMLDiagram = async (code: string) => {
     };
   } catch (error) {
     console.error("Error generating UML diagram:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to generate diagram";
+    toast({
+      title: "Error",
+      description: errorMessage,
+      variant: "destructive",
+    });
     return {
       success: false,
-      error: "Failed to generate diagram. Please try again."
+      error: errorMessage
     };
   }
 };
