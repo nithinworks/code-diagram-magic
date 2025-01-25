@@ -1,7 +1,16 @@
 import { useEffect, useRef } from "react";
-import { EditorView, basicSetup } from "codemirror";
+import { EditorView } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { EditorState } from "@codemirror/state";
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import {
+  syntaxHighlighting,
+  defaultHighlightStyle,
+  bracketMatching,
+  foldGutter,
+  indentOnInput,
+  lineNumbers,
+} from "@codemirror/language";
 
 interface CodeEditorProps {
   code: string;
@@ -18,8 +27,15 @@ const CodeEditor = ({ code, onChange }: CodeEditorProps) => {
     const state = EditorState.create({
       doc: code,
       extensions: [
-        basicSetup,
+        lineNumbers(),
+        history(),
+        indentOnInput(),
+        bracketMatching(),
+        foldGutter(),
+        syntaxHighlighting(defaultHighlightStyle),
         javascript(),
+        defaultKeymap,
+        historyKeymap,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             onChange(update.state.doc.toString());
