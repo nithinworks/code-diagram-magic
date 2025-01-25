@@ -12,13 +12,21 @@ export const generateMockUMLDiagram = async (code: string) => {
       .maybeSingle();
 
     if (error) {
-      console.error("Error fetching API key:", error);
-      throw new Error("Failed to fetch API key");
+      console.error("Database error fetching API key:", error);
+      throw new Error("Failed to fetch API key from database");
     }
 
     if (!data) {
-      throw new Error("API key not found");
+      console.error("No API key found in database");
+      throw new Error("Gemini API key not found in database. Please add it in the secrets configuration.");
     }
+
+    if (!data.value) {
+      console.error("API key value is empty");
+      throw new Error("Gemini API key value is empty. Please check the configuration.");
+    }
+
+    console.log("Successfully retrieved API key from database");
 
     // Initialize Gemini with the API key
     const genAI = new GoogleGenerativeAI(data.value);
@@ -42,7 +50,7 @@ export const generateMockUMLDiagram = async (code: string) => {
       diagram: text
     };
   } catch (error) {
-    console.error("Error generating UML diagram:", error);
+    console.error("Error in generateMockUMLDiagram:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to generate diagram";
     toast({
       title: "Error",
