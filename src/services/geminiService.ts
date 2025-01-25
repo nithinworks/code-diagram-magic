@@ -1,9 +1,25 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+import { supabase } from "@/integrations/supabase/client";
 
 export const generateMockUMLDiagram = async (code: string) => {
   try {
+    // Get the API key from Supabase
+    const { data: { value: apiKey }, error } = await supabase
+      .from('secrets')
+      .select('value')
+      .eq('name', 'GEMINI_API_KEY')
+      .single();
+
+    if (error || !apiKey) {
+      console.error("Error fetching API key:", error);
+      return {
+        success: false,
+        error: "Failed to fetch API key. Please ensure it's properly configured."
+      };
+    }
+
+    // Initialize Gemini with the API key
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `
