@@ -4,13 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 export const generateMockUMLDiagram = async (code: string) => {
   try {
     // Get the API key from Supabase
-    const { data: { value: apiKey }, error } = await supabase
+    const { data, error } = await supabase
       .from('secrets')
       .select('value')
       .eq('name', 'GEMINI_API_KEY')
       .single();
 
-    if (error || !apiKey) {
+    if (error || !data) {
       console.error("Error fetching API key:", error);
       return {
         success: false,
@@ -19,7 +19,7 @@ export const generateMockUMLDiagram = async (code: string) => {
     }
 
     // Initialize Gemini with the API key
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const genAI = new GoogleGenerativeAI(data.value);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `
