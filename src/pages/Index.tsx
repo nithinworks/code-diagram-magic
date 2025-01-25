@@ -3,7 +3,7 @@ import CodeEditor from "../components/CodeEditor";
 import DiagramViewer from "../components/DiagramViewer";
 import AnnotationsPanel from "../components/AnnotationsPanel";
 import { generateMockUMLDiagram } from "../services/geminiService";
-import { useToast } from "../components/ui/use-toast";
+import { useToast } from "../hooks/use-toast";
 
 const Index = () => {
   const [code, setCode] = useState("");
@@ -31,7 +31,11 @@ const Index = () => {
       const result = await generateMockUMLDiagram(code);
       if (result.success) {
         setDiagram(result.diagram);
-        setAnnotations(["Class structure detected", "Inheritance relationship found"]);
+        setAnnotations(["Class diagram generated", "Relationships identified"]);
+        toast({
+          title: "Success",
+          description: "UML diagram generated successfully",
+        });
       } else {
         toast({
           title: "Error",
