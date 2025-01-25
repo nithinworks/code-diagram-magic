@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { EditorView } from "@codemirror/view";
+import { EditorView, lineNumbers } from "@codemirror/view";
 import { javascript } from "@codemirror/lang-javascript";
 import { EditorState } from "@codemirror/state";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
@@ -9,7 +9,6 @@ import {
   bracketMatching,
   foldGutter,
   indentOnInput,
-  lineNumbers,
 } from "@codemirror/language";
 
 interface CodeEditorProps {
